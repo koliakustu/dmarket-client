@@ -84,10 +84,13 @@ class DMarketClient:
         self,
         gameid: str = "a8db",
         title: str | None = None,
+        category_path: str | None = None,
         price_from: int | None = None,
         price_to: int | None = None,
+        order_by: str = "price",
+        order_dir: str = "asc",
         limit: int = 10,
-        cursor: str | None = None
+        cursor: str | None = None,
     ) -> MarketplaceOffersResponse:
 
         path = "/marketplace-api/v2/offers"
@@ -95,6 +98,8 @@ class DMarketClient:
         payload = {
                 "gameId": gameid,
                 "limit": limit,
+                "orderBy": order_by,
+                "orderDir": order_dir,
         }
 
         if title:
@@ -109,6 +114,10 @@ class DMarketClient:
         if cursor:
             payload["cursor"] = cursor
 
+        if category_path:
+            payload["treeFilters"] = f"categoryPath={category_path}"
+
+        print(payload)
         response = self.call("GET", path, payload=payload)
 
         return MarketplaceOffersResponse(**response)
