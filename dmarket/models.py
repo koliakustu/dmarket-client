@@ -1,4 +1,10 @@
-from pydantic import AliasPath, BaseModel, Field
+from typing import Annotated
+from pydantic import AliasPath, BaseModel, BeforeValidator, Field
+
+def _parse_dollars_to_cents(v: str) -> int:
+    return round(float(v) * 100)
+
+DollarStrToCents = Annotated[int, BeforeValidator(_parse_dollars_to_cents)]
 
 class OfferItem(BaseModel):
     created_at: str = Field(alias="createdAt")
@@ -15,7 +21,7 @@ class BuyOrder(BaseModel):
     title: str
 
 class ItemSale(BaseModel):
-    price: int
+    price: DollarStrToCents
     date: str
     operation_type: str = Field(alias="txOperationType")
 
