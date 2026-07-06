@@ -9,7 +9,7 @@ DollarStrToCents = Annotated[int, BeforeValidator(_parse_dollars_to_cents)]
 class OfferItem(BaseModel):
     created_at: str = Field(alias="createdAt")
     offer_id: str = Field(alias="offerId")
-    price_cents: int = Field(alias="priceCents")
+    price: int = Field(alias="priceCents")
     locked: bool
     title: str = Field(validation_alias=AliasPath("attributes", "title"))
     category_path: str = Field(validation_alias=AliasPath("attributes", "categoryPath"))
