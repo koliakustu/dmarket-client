@@ -6,7 +6,7 @@ from urllib.parse import quote, urlencode
 import requests
 from nacl.bindings import crypto_sign
 
-from dmarket.models import BalanceResponse, MarketplaceOffersResponse, UserProfileResponse
+from dmarket.models import *
 
 class DMarketAPIError(Exception):
     pass
@@ -120,3 +120,7 @@ class DMarketClient:
         response = self.call("GET", path, payload=payload)
 
         return MarketplaceOffersResponse(**response)
+
+    def get_targets_by_title(self, title: str, game_id: str = "a8db"):
+        response = self.call("GET", f"/marketplace-api/v1/targets-by-title/{game_id}/{title}")
+        return TargetsByTitleResponse(**response)

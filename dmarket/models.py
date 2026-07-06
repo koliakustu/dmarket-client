@@ -9,6 +9,11 @@ class OfferItem(BaseModel):
     category_path: str = Field(validation_alias=AliasPath("attributes", "categoryPath"))
     tradable: bool = Field(validation_alias=AliasPath("attributes", "tradable"))
 
+class BuyOrder(BaseModel):
+    amount: int
+    price: int
+    title: str
+
 class BalanceResponse(BaseModel):
     dmc: str
     usd: str
@@ -24,4 +29,6 @@ class MarketplaceOffersResponse(BaseModel):
     total: int
     cursor: str
 
+class TargetsByTitleResponse(BaseModel):
+    orders: list[BuyOrder]
 
