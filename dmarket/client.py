@@ -124,3 +124,21 @@ class DMarketClient:
     def get_targets_by_title(self, title: str, game_id: str = "a8db"):
         response = self.call("GET", f"/marketplace-api/v1/targets-by-title/{game_id}/{title}")
         return TargetsByTitleResponse(**response)
+
+    def get_item_sales_history(self, title: str, game_id: str = "a8db", operation_type: str | None = None, limit: int = 20, offset: str | None = None) -> ItemSalesHistoryResponse:
+
+        payload = {
+                "gameId": game_id,
+                "title":  title,
+                "limit": limit,
+        }
+
+        if operation_type:
+            payload["txOperationType"] = operation_type
+
+        if offset:
+            payload["offset"] = offset
+
+        response = self.call("GET", "/trade-aggregator/v1/last-sales", payload=payload)
+
+        return ItemSalesHistoryResponse(**response)

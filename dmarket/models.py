@@ -14,6 +14,11 @@ class BuyOrder(BaseModel):
     price: int
     title: str
 
+class ItemSale(BaseModel):
+    price: int
+    date: str
+    operation_type: str = Field(alias="txOperationType")
+
 class BalanceResponse(BaseModel):
     dmc: str
     usd: str
@@ -31,4 +36,7 @@ class MarketplaceOffersResponse(BaseModel):
 
 class TargetsByTitleResponse(BaseModel):
     orders: list[BuyOrder]
+
+class ItemSalesHistoryResponse(BaseModel):
+    sales: list[ItemSale]
 
