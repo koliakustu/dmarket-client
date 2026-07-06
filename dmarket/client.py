@@ -117,7 +117,6 @@ class DMarketClient:
         if category_path:
             payload["treeFilters"] = f"categoryPath={category_path}"
 
-        print(payload)
         response = self.call("GET", path, payload=payload)
 
         return MarketplaceOffersResponse(**response)
