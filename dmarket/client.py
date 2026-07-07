@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from types import NoneType
 from urllib.parse import quote, urlencode
 
 import requests
@@ -20,7 +19,7 @@ class DMarketClient:
         self._root_api_url = "https://api.dmarket.com"
         self._signature_prefix = "dmar ed25519 "
 
-    def call(self, method: str, path: str, payload: dict | NoneType = None) -> dict:
+    def call(self, method: str, path: str, payload: dict | None = None) -> dict:
         """
         Makes a signed API call to DMarket.
 
