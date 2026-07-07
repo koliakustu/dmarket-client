@@ -9,9 +9,9 @@ def init_db():
     con.execute("""
         CREATE TABLE IF NOT EXISTS items (
             title TEXT PRIMARY KEY,
-            category TEXT
-            last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            is_active INTEGER DEFAULT 1,
+            category TEXT,
+            last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            is_active INTEGER DEFAULT 1
         )
     """)
 
@@ -60,24 +60,16 @@ def add_items(items_list: list[tuple[str, str]]) -> None:
     con.commit()
     con.close()
 
-def get_items_titles(category: str = "", active: bool | None = None) -> list[str]:
+def get_items_titles(category: str = "", active: bool = True) -> list[str]:
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
-    query = "SELECT title FROM items"
-    conditions = []
-    params = []
+    query = "SELECT title FROM items WHERE is_active = ?"
+    params: list[int | str] = [1 if active else 0]
 
     if category:
-        conditions.append("category = ?")
+        query += " AND category_path = ?"
         params.append(category)
-
-    if active is not None:
-        conditions.append("is_active = ?")
-        params.append(1 if active else 0)
-
-    if conditions:
-        query += " WHERE " + " AND ".join(conditions)
 
     cur.execute(query, params)
     titles = [row[0] for row in cur.fetchall()]
