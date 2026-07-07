@@ -78,11 +78,56 @@ def get_items_titles(category: str = "", active: bool = True) -> list[str]:
     return titles
 
 def update_offers(title: str, offers: dict[int,int]) -> None:
-    pass
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute("DELETE FROM offers WHERE title = ?", [title])
+
+    db_data = [(title, price, amount) for price, amount in offers.items()]
+
+    if db_data:
+        cur.executemany("""
+            INSERT INTO offers (title, price_cents, amount) 
+            VALUES (?, ?, ?)
+        """, db_data
+        )
+
+    con.commit()
+    con.close()
 
 def update_orders(title: str, orders: dict[int, int]) -> None:
-    pass
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute("DELETE FROM orders WHERE title = ?", [title])
+
+    db_data = [(title, price, amount) for price, amount in orders.items()]
+
+    if db_data:
+        cur.executemany("""
+            INSERT INTO orders (title, price_cents, amount) 
+            VALUES (?, ?, ?)
+        """, db_data
+        )
+
+    con.commit()
+    con.close()
 
 def update_sales(title: str, sales: dict[int, int]) -> None:
-    pass
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    cur.execute("DELETE FROM history WHERE title = ?", [title])
+
+    db_data = [(title, sale_date, price) for sale_date, price in sales.items()]
+
+    if db_data:
+        cur.executemany("""
+            INSERT INTO history (title, sale_date, price_cents) 
+            VALUES (?, ?, ?)
+        """, db_data
+        )
+
+    con.commit()
+    con.close()
 
