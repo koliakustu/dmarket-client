@@ -125,7 +125,14 @@ class DMarketClient:
         response = self.call("GET", f"/marketplace-api/v1/targets-by-title/{game_id}/{title}")
         return TargetsByTitleResponse(**response)
 
-    def get_item_sales_history(self, title: str, game_id: str = "a8db", operation_type: str | None = None, limit: int = 20, offset: str | None = None) -> ItemSalesHistoryResponse:
+    def get_item_sales_history(
+        self,
+        title: str,
+        game_id: str = "a8db",
+        operation_type: str | None = None,
+        limit: int = 20,
+        offset: str | None = None
+    ) -> ItemSalesHistoryResponse:
 
         payload = {
                 "gameId": game_id,
