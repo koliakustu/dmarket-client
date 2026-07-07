@@ -121,7 +121,7 @@ class DMarketClient:
 
         return MarketplaceOffersResponse(**response)
 
-    def get_targets_by_title(self, title: str, game_id: str = "a8db"):
+    def get_targets_by_title(self, title: str, game_id: str = "a8db") -> TargetsByTitleResponse:
         response = self.call("GET", f"/marketplace-api/v1/targets-by-title/{game_id}/{title}")
         return TargetsByTitleResponse(**response)
 
