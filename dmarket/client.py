@@ -89,7 +89,7 @@ class DMarketClient:
         price_to: int | None = None,
         order_by: str = "price",
         order_dir: str = "asc",
-        limit: int = 10,
+        limit: int = 100,
         cursor: str | None = None,
     ) -> MarketplaceOffersResponse:
 
