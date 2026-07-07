@@ -11,6 +11,7 @@ def init_db():
             title TEXT PRIMARY KEY,
             category TEXT
             last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            is_active INTEGER DEFAULT 1,
         )
     """)
 
