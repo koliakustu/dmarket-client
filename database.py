@@ -47,12 +47,49 @@ def init_db():
     con.commit()
     con.close()
 
-    def update_offers(title: str, offers: dict[int,int]) -> None:
-        pass
+def add_items(items_list: list[tuple[str, str]]) -> None:
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
 
-    def update_orders(title: str, orders: dict[int, int]) -> None:
-        pass
+    cur.executemany("""
+    INSERT OR IGNORE INTO items (title, category) 
+    VALUES (?, ?)
+    """, items_list)
 
-    def update_sales(title: str, sales: dict[int, int]) -> None:
-        pass
+    con.commit()
+    con.close()
+
+def get_items_titles(category: str = "", active: bool | None = None) -> list[str]:
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+
+    query = "SELECT title FROM items"
+    conditions = []
+    params = []
+
+    if category:
+        conditions.append("category = ?")
+        params.append(category)
+
+    if active is not None:
+        conditions.append("is_active = ?")
+        params.append(1 if active else 0)
+
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    cur.execute(query, params)
+    titles = [row[0] for row in cur.fetchall()]
+
+    con.close()
+    return titles
+
+def update_offers(title: str, offers: dict[int,int]) -> None:
+    pass
+
+def update_orders(title: str, orders: dict[int, int]) -> None:
+    pass
+
+def update_sales(title: str, sales: dict[int, int]) -> None:
+    pass
 
