@@ -19,7 +19,7 @@ class DMarketClient:
         self._root_api_url = "https://api.dmarket.com"
         self._signature_prefix = "dmar ed25519 "
 
-    def call(self, method: str, path: str, payload: dict | None = None) -> dict:
+    def call(self, method: str, path: str, payload: dict | None = None, sign_path: str | None = None) -> dict:
         """
         Makes a signed API call to DMarket.
 
@@ -31,15 +31,18 @@ class DMarketClient:
         method = method.upper()
         nonce = str(round(datetime.now().timestamp()))
         api_url_path = path
+        actual_sign_path = sign_path if sign_path else path
         request_body = ""
 
         if payload:
             if method == "GET":
-                api_url_path = f"{path}?{urlencode(payload, quote_via=quote)}"
+                query_string = urlencode(payload, quote_via=quote)
+                api_url_path = f"{path}?{query_string}"
+                actual_sign_path = f"{actual_sign_path}?{query_string}"
             else:
                 request_body = json.dumps(payload)
 
-        string_to_sign = method + api_url_path + request_body + nonce
+        string_to_sign = method + actual_sign_path + request_body + nonce
         signature = self._generate_signature(string_to_sign)
 
         headers = {
@@ -121,8 +124,13 @@ class DMarketClient:
         return MarketplaceOffersResponse(**response)
 
     def get_targets_by_title(self, title: str, game_id: str = "a8db") -> TargetsByTitleResponse:
-        encoded_title = quote(title, safe='')
-        response = self.call("GET", f"/marketplace-api/v1/targets-by-title/{game_id}/{encoded_title}")
+        encoded_title = quote(title, safe="!'()*")
+        response = self.call(
+            method = "GET",
+            path = f"/marketplace-api/v1/targets-by-title/{game_id}/{encoded_title}",
+            sign_path = f"/marketplace-api/v1/targets-by-title/{game_id}/{title}",
+
+        )
         return TargetsByTitleResponse(**response)
 
     def get_item_sales_history(
