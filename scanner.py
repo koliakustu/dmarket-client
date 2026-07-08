@@ -30,9 +30,7 @@ def populate_items(client: DMarketClient, title: str | None = None, category_pat
         for item_tuple, prices_dict in items_dict.items():
             database.update_offers(item_tuple[0], prices_dict)
 
-def sync_item_data(client: DMarketClient, title: str) -> None:
-    database.touch_item_timestamp(title)
-
+def sync_item_offers(client: DMarketClient, title: str) -> None:
     offers_dict: dict[int, int] = {}
     cursor: str | None = None
 
@@ -49,6 +47,7 @@ def sync_item_data(client: DMarketClient, title: str) -> None:
             break
     database.update_offers(title, offers_dict)
 
+def sync_item_orders(client: DMarketClient, title: str) -> None:
     orders_response: TargetsByTitleResponse = client.get_targets_by_title(title=title)
     orders_dict: dict[int, int] = {}
     for order in orders_response.orders:
@@ -56,6 +55,7 @@ def sync_item_data(client: DMarketClient, title: str) -> None:
 
     database.update_orders(title, orders_dict)
 
+def sync_item_sales(client: DMarketClient, title: str) -> None:
     sales: list[tuple[int, int, int]] = []
     offset = 0
     while True:
@@ -67,3 +67,11 @@ def sync_item_data(client: DMarketClient, title: str) -> None:
         offset += len(sales_response.sales)
 
     database.update_sales(title, sales)
+
+def sync_item_data(client: DMarketClient, title: str) -> None:
+    database.touch_item_timestamp(title)
+    sync_item_offers(client=client, title=title)
+    sync_item_orders(client=client, title=title)
+    sync_item_sales(client=client, title=title)
+
+
