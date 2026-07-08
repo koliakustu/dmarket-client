@@ -62,6 +62,15 @@ def add_items(items_list: list[tuple[str, str]]) -> None:
     con.commit()
     con.close()
 
+def touch_item_timestamp(title: str) -> None:
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    cur.execute("""
+    UPDATE items SET last_updated_at = CURRENT_TIMESTAMP WHERE title = ?
+    """, [title])
+    con.commit()
+    con.close()
+
 def get_items_titles(category: str = "", active: bool = True) -> list[str]:
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
