@@ -149,7 +149,7 @@ def update_sales(title: str, sales: list[tuple[int, int, int]]) -> None:
     con.commit()
     con.close()
 
-def get_last_sale_date(title: str) -> str | None:
+def get_last_sale_date(title: str) -> int | None:
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
     cur.execute("SELECT MAX(sale_date) FROM history WHERE title = ?", [title])
