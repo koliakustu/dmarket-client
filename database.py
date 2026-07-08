@@ -39,7 +39,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT,
-            sale_date TEXT,
+            sale_date INTEGER,
             price_cents INTEGER,
             is_order INTEGER,
             FOREIGN KEY (title) REFERENCES items (title) ON DELETE CASCADE
