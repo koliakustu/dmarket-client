@@ -85,7 +85,7 @@ def get_items_titles(category: str = "", active: bool = True) -> list[str]:
     params: list[int | str] = [1 if active else 0]
 
     if category:
-        query += " AND category_path = ?"
+        query += " AND category = ?"
         params.append(category)
 
     cur.execute(query, params)
