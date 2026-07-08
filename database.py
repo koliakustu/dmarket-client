@@ -65,9 +65,15 @@ def add_items(items_list: list[tuple[str, str]]) -> None:
 def touch_item_timestamp(title: str) -> None:
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
+
     cur.execute("""
     UPDATE items SET last_updated_at = CURRENT_TIMESTAMP WHERE title = ?
     """, [title])
+
+    if cur.rowcount == 0:
+        con.close()
+        raise ValueError(f"Item '{title}' does not exist in the database.")
+
     con.commit()
     con.close()
 
