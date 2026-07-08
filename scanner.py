@@ -1,3 +1,4 @@
+import time
 import database
 from dmarket.client import DMarketClient
 from dmarket.models import *
@@ -55,7 +56,16 @@ def sync_item_orders(client: DMarketClient, title: str) -> None:
 
     database.update_orders(title, orders_dict)
 
-def sync_item_sales(client: DMarketClient, title: str) -> None:
+def sync_item_sales(client: DMarketClient, title: str, days_limit: int = 30) -> None:
+    seconds_in_day = 86400
+    cutoff_timestamp = int(time.time()) - (days_limit * seconds_in_day)
+
+    last_known_date = database.get_last_sale_date(title)
+    if last_known_date:
+        stop_timestamp = max(last_known_date, cutoff_timestamp)
+    else:
+        stop_timestamp = cutoff_timestamp
+
     sales: list[tuple[int, int, int]] = []
     offset = 0
     while True:
@@ -63,6 +73,8 @@ def sync_item_sales(client: DMarketClient, title: str) -> None:
         if not sales_response.sales:
             break
         for sale in sales_response.sales:
+            if sale.date <= stop_timestamp:
+                break
             sales.append((sale.date, sale.price, 1 if sale.operation_type == "Target" else 0))
         offset += len(sales_response.sales)
 
