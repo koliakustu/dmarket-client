@@ -22,7 +22,7 @@ class BuyOrder(BaseModel):
 
 class ItemSale(BaseModel):
     price: DollarStrToCents
-    date: str
+    date: int
     operation_type: str = Field(alias="txOperationType")
 
 class BalanceResponse(BaseModel):

@@ -130,13 +130,13 @@ def update_orders(title: str, orders: dict[int, int]) -> None:
     con.commit()
     con.close()
 
-def update_sales(title: str, sales: dict[int, int]) -> None:
+def update_sales(title: str, sales: list[tuple[int, int]]) -> None:
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
     cur.execute("DELETE FROM history WHERE title = ?", [title])
 
-    db_data = [(title, sale_date, price) for sale_date, price in sales.items()]
+    db_data = [(title, sale_date, price) for sale_date, price in sales]
 
     if db_data:
         cur.executemany("""

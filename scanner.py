@@ -56,14 +56,14 @@ def sync_item_data(client: DMarketClient, title: str) -> None:
 
     database.update_orders(title, orders_dict)
 
-    sales_dict = {}
+    sales: list[tuple[int, int]] = []
     offset = 0
     while True:
         sales_response: ItemSalesHistoryResponse = client.get_item_sales_history(title=title, limit=100, offset=offset)
         if not sales_response.sales:
             break
         for sale in sales_response.sales:
-            sales_dict[sale.date] = sale.price
+            sales.append((sale.date, sale.price))
         offset += len(sales_response.sales)
 
-    database.update_sales(title, sales_dict)
+    database.update_sales(title, sales)
