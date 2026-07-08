@@ -2,12 +2,12 @@ import database
 from dmarket.client import DMarketClient
 from dmarket.models import *
 
-def populate_items(client: DMarketClient, category_path: str | None = None, update_offers: bool = True) -> None:
+def populate_items(client: DMarketClient, title: str | None = None, category_path: str | None = None, update_offers: bool = True) -> None:
     offers: list[OfferItem] = []
     cursor: str | None = None
 
     while True:
-        response = client.get_market_offers(category_path=category_path, limit=100, cursor=cursor)
+        response = client.get_market_offers(title=title, category_path=category_path, limit=100, cursor=cursor)
         offers.extend(response.items)
         cursor = response.cursor
         if not cursor:
@@ -31,6 +31,8 @@ def populate_items(client: DMarketClient, category_path: str | None = None, upda
             database.update_offers(item_tuple[0], prices_dict)
 
 def sync_item_data(client: DMarketClient, title: str) -> None:
+    database.touch_item_timestamp(title)
+
     offers_dict: dict[int, int] = {}
     cursor: str | None = None
 
