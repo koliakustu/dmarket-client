@@ -53,8 +53,10 @@ def add_items(items_list: list[tuple[str, str]]) -> None:
     cur = con.cursor()
 
     cur.executemany("""
-    INSERT OR IGNORE INTO items (title, category) 
-    VALUES (?, ?)
+    INSERT INTO items (title, category, last_updated_at)
+    VALUES (?, ?, CURRENT_TIMESTAMP)
+    ON CONFLICT(title) DO UPDATE SET
+        last_updated_at = CURRENT_TIMESTAMP
     """, items_list)
 
     con.commit()
