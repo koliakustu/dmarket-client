@@ -129,8 +129,8 @@ class DMarketClient:
         title: str,
         game_id: str = "a8db",
         operation_type: str | None = None,
-        limit: int = 20,
-        offset: str | None = None
+        limit: int = 100,
+        offset: int = 0 
     ) -> ItemSalesHistoryResponse:
 
         payload = {
