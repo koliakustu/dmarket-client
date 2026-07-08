@@ -41,6 +41,7 @@ def init_db():
             title TEXT,
             sale_date TEXT,
             price_cents INTEGER,
+            is_order INTEGER,
             FOREIGN KEY (title) REFERENCES items (title) ON DELETE CASCADE
         )
     """)
@@ -130,18 +131,18 @@ def update_orders(title: str, orders: dict[int, int]) -> None:
     con.commit()
     con.close()
 
-def update_sales(title: str, sales: list[tuple[int, int]]) -> None:
+def update_sales(title: str, sales: list[tuple[int, int, int]]) -> None:
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
     cur.execute("DELETE FROM history WHERE title = ?", [title])
 
-    db_data = [(title, sale_date, price) for sale_date, price in sales]
+    db_data = [(title, sale_date, price, is_order) for sale_date, price, is_order in sales]
 
     if db_data:
         cur.executemany("""
-            INSERT INTO history (title, sale_date, price_cents) 
-            VALUES (?, ?, ?)
+            INSERT INTO history (title, sale_date, price_cents, is_order) 
+            VALUES (?, ?, ?, ?)
         """, db_data
         )
 
