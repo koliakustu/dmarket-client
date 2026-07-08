@@ -1,6 +1,6 @@
 import database
 from dmarket.client import DMarketClient
-from dmarket.models import OfferItem
+from dmarket.models import *
 
 def populate_items(client: DMarketClient, category_path: str | None = None, update_offers: bool = True) -> None:
     offers: list[OfferItem] = []
@@ -30,3 +30,38 @@ def populate_items(client: DMarketClient, category_path: str | None = None, upda
         for item_tuple, prices_dict in items_dict.items():
             database.update_offers(item_tuple[0], prices_dict)
 
+def sync_item_data(client: DMarketClient, title: str) -> None:
+    offers_dict: dict[int, int] = {}
+    cursor: str | None = None
+
+    while True:
+        offers_response: MarketplaceOffersResponse = client.get_market_offers(title=title, limit=100, cursor=cursor)
+        for offer in offers_response.items:
+            price = offer.price
+            if price in offers_dict:
+                offers_dict[price] += 1
+            else:
+                offers_dict[price] = 1
+        cursor = offers_response.cursor
+        if not cursor:
+            break
+    database.update_offers(title, offers_dict)
+
+    orders_response: TargetsByTitleResponse = client.get_targets_by_title(title=title)
+    orders_dict: dict[int, int] = {}
+    for order in orders_response.orders:
+        orders_dict[order.price] = order.amount
+
+    database.update_orders(title, orders_dict)
+
+    sales_dict = {}
+    offset = 0
+    while True:
+        sales_response: ItemSalesHistoryResponse = client.get_item_sales_history(title=title, limit=100, offset=offset)
+        if not sales_response.sales:
+            break
+        for sale in sales_response.sales:
+            sales_dict[sale.date] = sale.price
+        offset += len(sales_response.sales)
+
+    database.update_sales(title, sales_dict)
