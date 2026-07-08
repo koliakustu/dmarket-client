@@ -148,3 +148,10 @@ def update_sales(title: str, sales: dict[int, int]) -> None:
     con.commit()
     con.close()
 
+def get_last_sale_date(title: str) -> str | None:
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    cur.execute("SELECT MAX(sale_date) FROM history WHERE title = ?", [title])
+    res = cur.fetchone()
+    con.close()
+    return res[0] if res else None
